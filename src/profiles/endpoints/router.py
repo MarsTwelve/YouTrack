@@ -1,23 +1,19 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import Annotated
+
 from src.users.schemas.login import UserLogin
-
 from src.Database.operations import Database
-from src.profiles.schemas.input import ProfileInput
-from src.profiles.schemas.update import ProfileUpdate
-# TODO:from src.profiles.services.validator import ProfileValidatorService
-from src.profiles.services.profile_management import ProfileManagementService
-from src.profiles.repository.profile_repository import SQLAlchemyProfileRepository
-
-from src.users.repository.user_repository import SQLAlchemyUserRepository
-from src.users.services.user_management import UserManagementService
-from src.users.controller.user_management import UserManagementController
-
-from src.profiles.controller.profile_management import ProfileManagementController
-
 from src.auth.schemas import Token
 from src.auth.authentication import get_current_user
-# TODO:from src.profiles.controller.validation_controller import ProfileValidationController
+from src.exeptions.custom_exeptions import BadRequestException
+
+from src.profiles.schemas.input import ProfileInput
+from src.profiles.schemas.update import ProfileUpdate
+from src.profiles.services.profile_management import ProfileManagementService
+from src.profiles.services.profile_validation import ProfileNameValidationService
+from src.profiles.repository.profile_repository import SQLAlchemyProfileRepository
+from src.profiles.controller.profile_management import ProfileManagementController
+from src.profiles.controller.profile_validation import ProfileValidationController
 
 profile_router = APIRouter(
     prefix="/profile",
@@ -27,10 +23,17 @@ profile_router = APIRouter(
 
 @profile_router.post("/")
 async def create_new_profile(current_user: Annotated[UserLogin, Depends(get_current_user)], profile_data: ProfileInput):
-    # TODO: implement profile_data validation with tests, profile name field (priority 0 - green)
     if not current_user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="[ERR]INVALID_CREDENTIALS - "
                                                                              "Could not validate user credentials")
+
+    validation_service = ProfileNameValidationService(profile_data.profile_name)
+    controller = ProfileValidationController(validation_service)
+
+    try:
+        controller.validate_profile_name()
+    except BadRequestException as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=e.__str__())
 
     db = Database()
     session = db.get_session()
@@ -61,6 +64,14 @@ async def get_profile_by_name(current_user: Annotated[UserLogin, Depends(get_cur
     if not current_user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="[ERR]INVALID_CREDENTIALS - "
                                                                              "Could not validate user credentials")
+
+    validation_service = ProfileNameValidationService(profile_name)
+    controller = ProfileValidationController(validation_service)
+
+    try:
+        controller.validate_profile_name()
+    except BadRequestException as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=e.__str__())
 
     db = Database()
     session = db.get_session()
