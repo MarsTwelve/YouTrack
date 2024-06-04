@@ -31,7 +31,8 @@ def make_user_schema():
              unit_speed: str = "KMH",
              unit_volume: str = "Liter",
              unit_length: str = "Kilometer",
-             unit_temp: str = "Celsius"):
+             unit_temp: str = "Celsius",
+             client_id: str = "30350b587b11479f91a0a7caabcfe328"):
         user_schema = UserInput(username=username,
                                 password=password,
                                 email=email,
@@ -41,7 +42,8 @@ def make_user_schema():
                                 unit_speed=unit_speed,
                                 unit_volume=unit_volume,
                                 unit_length=unit_length,
-                                unit_temp=unit_temp)
+                                unit_temp=unit_temp,
+                                client_id=client_id)
         return user_schema
 
     return make
@@ -54,13 +56,15 @@ def make_vehicle_schema():
              vehicle_trim: str | None = "Standard Vehicle Trim",
              vehicle_color: str = "Standard Vehicle Color",
              manufacture_year: str = 2024,
-             number_plate: str = "AWS3F98"):
+             number_plate: str = "AWS3F98",
+             client_id: str = "30350b587b11479f91a0a7caabcfe328"):
         vehicle_schema = VehicleInput(vehicle_make=vehicle_make,
                                       vehicle_model=vehicle_model,
                                       vehicle_trim=vehicle_trim,
                                       vehicle_color=vehicle_color,
                                       manufacture_year=manufacture_year,
-                                      number_plate=number_plate)
+                                      number_plate=number_plate,
+                                      client_id=client_id)
 
         return vehicle_schema
 
