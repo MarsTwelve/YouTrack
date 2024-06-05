@@ -57,7 +57,7 @@ def make_profile_update_schema():
     def make(
             profile_id: str = "06e84bece3594ba9a4d65310ca2e81b5",
             update_field: str = "speed_avg",
-            update_param: Union[str: bool] = "False"):
+            update_param: Union[str: bool] = False):
         profile_update_schema = ProfileUpdate(
             profile_id=profile_id,
             update_field=update_field,
