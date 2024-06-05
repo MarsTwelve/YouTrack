@@ -30,7 +30,7 @@ class ProfileNameValidationService(ProfileNameValidationInterface):
         self.format_spacing()
         if self.validate_invalid_chars():
             raise BadRequestException(base_response + " - Invalid characters are not allowed")
-        return None
+        return True
 
 
 class ProfileUpdateValidationService(ProfileUpdateValidationInterface, ABC):
@@ -52,6 +52,7 @@ class ProfileUpdateValidationService(ProfileUpdateValidationInterface, ABC):
     def profile_id_validator(self):
         if len(self.__profile_data.profile_id) != 32:
             return False
+        return True
 
     def profile_update_field_validator(self):
         valid_fields = ["profile_name", "administrator", "fuel_avg", "speed_avg",
@@ -59,6 +60,7 @@ class ProfileUpdateValidationService(ProfileUpdateValidationInterface, ABC):
 
         if self.__profile_data.update_field not in valid_fields:
             return False
+        return True
 
     def profile_update_param_validator(self):
         if self.__profile_data.update_field == "profile_name":
@@ -67,6 +69,7 @@ class ProfileUpdateValidationService(ProfileUpdateValidationInterface, ABC):
 
         if not isinstance(self.__profile_data.update_param, bool):
             return False
+        return True
 
     def validate_profile_update(self):
         base_response = "[ERR]VALIDATION_FAILED"
