@@ -38,24 +38,25 @@ class SQLAlchemyProfileRepository(ProfileRepositoryInterface, ABC):
         result = self.__session.execute(select_all).scalars()
 
         for row in result:
-            profile = ProfileOutput(profile_id=row.id,
-                                    vehicle_id_list=row.vehicles,
-                                    profile_name=row.profile_name,
-                                    administrator=row.administrator,
-                                    fuel_avg=row.fuel_avg,
-                                    speed_avg=row.speed_avg,
-                                    route=row.route,
-                                    perimeters=row.perimeters,
-                                    tracking=row.tracking,
-                                    weather=row.weather)
-            yield profile
+            profile_response = ProfileOutput(profile_id=row.id,
+                                             vehicle_id_list=row.vehicles,
+                                             profile_name=row.profile_name,
+                                             administrator=row.administrator,
+                                             fuel_avg=row.fuel_avg,
+                                             speed_avg=row.speed_avg,
+                                             route=row.route,
+                                             perimeters=row.perimeters,
+                                             tracking=row.tracking,
+                                             weather=row.weather)
+            yield profile_response
 
         self.__session.close()
 
     def select_profile_by_name(self, profile_name: str):
 
         select_by_name = (select(ProfileModel)
-                          .where(ProfileModel.profile_name.like(f"%{profile_name}%")))
+                          .where(ProfileModel.profile_name
+                                 .like(f"%{profile_name}%")))
 
         result = self.__session.execute(select_by_name).scalars()
 
@@ -113,6 +114,3 @@ class SQLAlchemyProfileRepository(ProfileRepositoryInterface, ABC):
             else:
                 return "[ERR]DELETION_ERROR - Profile deletion failed"  # TODO: Change to custom exception later (priority 2 - Yellow)
         return f"No profile found with id {profile_id}"  # TODO: Change to custom exception later(priority 2 - Yellow)
-
-
-
