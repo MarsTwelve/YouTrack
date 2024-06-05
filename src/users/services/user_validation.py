@@ -1,7 +1,7 @@
 import re
 from abc import ABC
 
-from src.users.interfaces.i_user_validator import UserValidatorInterface
+from src.users.interfaces.i_user_validation import UserValidatorInterface
 from src.exeptions.custom_exeptions import BadRequestException
 
 
@@ -118,5 +118,3 @@ class UserValidatorService(UserValidatorInterface, ABC):
 
         if not self.validate_temperature_unit():
             raise BadRequestException(base_response + " - Invalid temperature unit type")
-
-        return True
