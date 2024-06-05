@@ -30,3 +30,29 @@ def test_profile_invalid_update_fields_validation(make_profile_update_schema):
     profile_fail = make_profile_update_schema(update_field="non ecxiste")
     validate = ProfileUpdateValidationService(profile_fail)
     assert_that(validate.profile_update_field_validator(), equal_to(False))
+
+
+def test_profile_valid_update_param_on_bool_fields_validation(make_profile_update_schema):
+    profile_pass = make_profile_update_schema()
+    validate = ProfileUpdateValidationService(profile_pass)
+    assert_that(validate.profile_update_param_validator(), equal_to(True))
+
+
+def test_profile_invalid_update_param_on_bool_fields_validation(make_profile_update_schema):
+    profile_fail = make_profile_update_schema(update_param="False")
+    validate = ProfileUpdateValidationService(profile_fail)
+    assert_that(validate.profile_update_param_validator(), equal_to(False))
+
+
+def test_profile_valid_update_param_on_profile_name_field_validation(make_profile_update_schema):
+    profile_pass = make_profile_update_schema(update_field="profile_name",
+                                              update_param="profile")
+    validate = ProfileUpdateValidationService(profile_pass)
+    assert_that(validate.profile_update_param_validator(), equal_to(False))
+
+
+def test_profile_invalid_update_param_on_profile_name_field_validation(make_profile_update_schema):
+    profile_fail = make_profile_update_schema(update_field="profile_name",
+                                              update_param="Nome inv@lido")
+    validate = ProfileUpdateValidationService(profile_fail)
+    assert_that(validate.profile_update_param_validator(), equal_to(True))
