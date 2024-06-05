@@ -56,7 +56,14 @@ async def get_profiles(page_size: int, page: int):
     controller = ProfileManagementController(profile_service)
 
     response = controller.read_all_profiles(page, page_size)
-    return response
+
+    try:
+        first_item = next(response)
+        remaining_items = list(response)
+    except StopIteration:
+        raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, headers={"X-Message": "No results found"})
+    remaining_items.insert(0, first_item)
+    return remaining_items
 
 
 @profile_router.get("/{profile_name}")
@@ -82,7 +89,14 @@ async def get_profile_by_name(current_user: Annotated[UserLogin, Depends(get_cur
     controller = ProfileManagementController(client_service)
 
     response = controller.find_profile_by_name(profile_name)
-    return response
+
+    try:
+        first_item = next(response)
+        remaining_items = list(response)
+    except StopIteration:
+        raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, headers={"X-Message": "No results found"})
+    remaining_items.insert(0, first_item)
+    return remaining_items
 
 
 @profile_router.patch("/{profile_id}")
