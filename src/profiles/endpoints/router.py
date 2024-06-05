@@ -68,7 +68,6 @@ async def get_profiles(page_size: int, page: int):
 
 @profile_router.get("/{profile_name}")
 async def get_profile_by_name(current_user: Annotated[UserLogin, Depends(get_current_user)], profile_name: str):
-
     if not current_user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="[ERR]INVALID_CREDENTIALS - "
                                                                              "Could not validate user credentials")
@@ -87,7 +86,6 @@ async def get_profile_by_name(current_user: Annotated[UserLogin, Depends(get_cur
     repository = SQLAlchemyProfileRepository(session)
     client_service = ProfileManagementService(repository)
     controller = ProfileManagementController(client_service)
-
     response = controller.find_profile_by_name(profile_name)
 
     try:
@@ -101,9 +99,6 @@ async def get_profile_by_name(current_user: Annotated[UserLogin, Depends(get_cur
 
 @profile_router.patch("/{profile_id}")
 async def update_profile(current_user: Annotated[UserLogin, Depends(get_current_user)], profile_data: ProfileUpdate):
-
-    # TODO: Implement validation to the profile_data with tests (priority 0 - yellow)
-
     if not current_user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="[ERR]INVALID_CREDENTIALS - "
                                                                              "Could not validate user credentials")
@@ -129,7 +124,6 @@ async def update_profile(current_user: Annotated[UserLogin, Depends(get_current_
 
 @profile_router.delete("/{profile_id}")
 async def delete_profile(current_user: Annotated[UserLogin, Depends(get_current_user)], profile_id: str):
-
     if not current_user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="[ERR]INVALID_CREDENTIALS - "
                                                                              "Could not validate user credentials")
