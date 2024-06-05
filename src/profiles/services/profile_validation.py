@@ -64,7 +64,7 @@ class ProfileUpdateValidationService(ProfileUpdateValidationInterface, ABC):
 
     def profile_update_param_validator(self):
         if self.__profile_data.update_field == "profile_name":
-            formatted_name = self.format_spacing(self.__profile_data.update_field)
+            formatted_name = self.format_spacing(self.__profile_data.update_param)
             return self.validate_invalid_chars(formatted_name)
 
         if not isinstance(self.__profile_data.update_param, bool):
