@@ -10,7 +10,8 @@ from src.exeptions.custom_exeptions import BadRequestException
 from src.profiles.schemas.input import ProfileInput
 from src.profiles.schemas.update import ProfileUpdate
 from src.profiles.services.profile_management import ProfileManagementService
-from src.profiles.services.profile_validation import ProfileNameValidationService
+from src.profiles.services.profile_validation import (ProfileNameValidationService,
+                                                      ProfileUpdateValidationService)
 from src.profiles.repository.profile_repository import SQLAlchemyProfileRepository
 from src.profiles.controller.profile_management import ProfileManagementController
 from src.profiles.controller.profile_validation import ProfileValidationController
@@ -92,6 +93,14 @@ async def update_profile(current_user: Annotated[UserLogin, Depends(get_current_
     if not current_user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="[ERR]INVALID_CREDENTIALS - "
                                                                              "Could not validate user credentials")
+
+    validation_service = ProfileUpdateValidationService(profile_data)
+    controller = ProfileValidationController(validation_service)
+
+    try:
+        controller.validate_profile_update()
+    except BadRequestException as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=e.__str__())
 
     db = Database()
     session = db.get_session()
