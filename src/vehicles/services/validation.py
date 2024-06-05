@@ -2,6 +2,7 @@ import re
 from datetime import datetime
 from abc import ABC
 
+from src.exeptions.custom_exeptions import BadRequestException
 from src.vehicles.interfaces.i_validator import VehicleValidatorInterface
 
 
@@ -45,11 +46,10 @@ class VehicleValidationService(VehicleValidatorInterface, ABC):
         self.format_spacing()
 
         if self.validate_invalid_chars():
-            return base_response
+            raise BadRequestException(base_response + " - Invalid characters are not allowed")
 
         if not self.validate_manufacture_year():
-            return base_response
+            raise BadRequestException(base_response + " - Invalid manufacture year")
 
         if not self.validate_plate_format():
-            return base_response
-        return True
+            raise BadRequestException(base_response + " - Invalid plate format")
