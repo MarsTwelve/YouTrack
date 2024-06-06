@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class UserValidatorInterface(ABC):
-
+class UserBaseValidatorInterface(ABC):
     @abstractmethod
     def format_spacing(self):
         pass
@@ -10,6 +9,9 @@ class UserValidatorInterface(ABC):
     @abstractmethod
     def validate_invalid_chars(self):
         pass
+
+
+class UserValidatorInterface(UserBaseValidatorInterface):
 
     @abstractmethod
     def validate_email_format(self):
