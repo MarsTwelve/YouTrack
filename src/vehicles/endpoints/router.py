@@ -1,19 +1,18 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, status, HTTPException
 
 from src.Database.operations import Database
+from src.auth.authentication import get_current_user
+from src.exeptions.custom_exeptions import BadRequestException
 
 from src.vehicles.schemas.input import VehicleInput
 from src.vehicles.schemas.search import VehicleSearch
 from src.vehicles.schemas.update import VehicleUpdate
-
-from src.vehicles.controller.validation import VehicleValidationController
-from src.vehicles.services.validation import VehicleValidationService
-
-from src.vehicles.controller.vehicle_management import VehicleManagementController
-from src.vehicles.services.vehicle_management import VehicleManagementService
 from src.vehicles.repository.vehicle_repository import SQLAlchemyVehicleRepository
+from src.vehicles.services.validation import VehicleValidationService
+from src.vehicles.services.vehicle_management import VehicleManagementService
+from src.vehicles.controller.validation import VehicleValidationController
+from src.vehicles.controller.vehicle_management import VehicleManagementController
 
-from src.auth.authentication import get_current_user
 
 vehicles_router = APIRouter(
     prefix="/vehicles",
