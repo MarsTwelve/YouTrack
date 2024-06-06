@@ -13,7 +13,8 @@ from src.users.services.user_management import UserManagementService
 from src.users.repository.user_repository import SQLAlchemyUserRepository
 from src.users.controller.user_management import UserManagementController
 
-from src.exeptions.custom_exeptions import BadRequestException
+from src.exeptions.custom_exeptions import (BadRequestException,
+                                            DuplicateDataException)
 
 from src.auth.schemas import Token
 from src.auth.authentication import (authenticate_user,
@@ -56,9 +57,8 @@ async def create_new_user(user_data: UserInput):
 
     try:
         response = controller.create_new_user(user_data)
-    except BadRequestException as e:
+    except DuplicateDataException as e:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=e.__str__())
-
     return response
 
 
