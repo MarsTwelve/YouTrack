@@ -51,9 +51,15 @@ async def get_vehicles(page: int, page_size: int):
     repository = SQLAlchemyVehicleRepository(session)
     vehicle_service = VehicleManagementService(repository)
     controller = VehicleManagementController(vehicle_service)
-
     response = controller.read_all_vehicles(page, page_size)
-    return response
+
+    try:
+        first_item = next(response)
+        remaining_items = list(response)
+    except StopIteration:
+        raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, headers={"X-Message": "No results found"})
+    remaining_items.insert(0, first_item)
+    return remaining_items
 
 
 @vehicles_router.get("/{vehicle_name}")
@@ -64,9 +70,15 @@ async def get_vehicle_by_name(vehicle_data: VehicleSearch):
     repository = SQLAlchemyVehicleRepository(session)
     vehicle_service = VehicleManagementService(repository)
     controller = VehicleManagementController(vehicle_service)
-
     response = controller.find_vehicle_by_name(vehicle_data)
-    return response
+
+    try:
+        first_item = next(response)
+        remaining_items = list(response)
+    except StopIteration:
+        raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, headers={"X-Message": "No results found"})
+    remaining_items.insert(0, first_item)
+    return remaining_items
 
 
 @vehicles_router.patch("/{vehicle_id}")
