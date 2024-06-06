@@ -27,10 +27,11 @@ async def create_new_vehicle(vehicle_data: VehicleInput):
 
     validation_service = VehicleValidationService(vehicle_data)
     controller = VehicleValidationController(validation_service)
-    response = controller.validate.validate_vehicle_schema()
 
-    if not response:
-        return "failed, show error message"
+    try:
+        controller.validate.validate_vehicle_schema()
+    except BadRequestException as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=e.__str__())
 
     db = Database()
     session = db.get_session()
