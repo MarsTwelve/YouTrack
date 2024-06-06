@@ -51,8 +51,14 @@ async def get_clients(page: int = 1, page_size: int = 5):
     client_service = ClientManagementService(repository)
     controller = ClientManagementController(client_service)
     response = controller.get_all_clients(page, page_size)
-    return response
 
+    try:
+        first_item = next(response)
+        remaining_items = list(response)
+    except StopIteration:
+        raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, headers={"X-Message": "No results found"})
+    remaining_items.insert(0, first_item)
+    return remaining_items
 
 @client_router.get("/{name}", status_code=status.HTTP_200_OK)
 async def get_clients_by_name(client_name: str):
@@ -71,11 +77,14 @@ async def get_clients_by_name(client_name: str):
     client_service = ClientManagementService(repository)
     controller = ClientManagementController(client_service)
     response = controller.get_client_by_name(client_name)
+
     try:
         first_item = next(response)
+        remaining_items = list(response)
     except StopIteration:
         raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, headers={"X-Message": "No results found"})
-    return first_item, response
+    remaining_items.insert(0, first_item)
+    return remaining_items
 
 
 @client_router.patch("/{client_id}")
