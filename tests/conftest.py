@@ -98,6 +98,19 @@ def make_user_schema():
 
 
 @pytest.fixture()
+def make_user_update_schema():
+    def make(user_id: str = "0e229f230495461f92ca278cdee4625b",
+             update_field: str = "currency",
+             update_param: str = "ARS"):
+        user_update_schema = UserUpdate(user_id=user_id,
+                                        update_field=update_field,
+                                        update_param=update_param)
+        return user_update_schema
+
+    return make
+
+
+@pytest.fixture()
 def make_vehicle_schema():
     def make(vehicle_make: str = "Standard Vehicle Brand",
              vehicle_model: str = "Standard Vehicle Model",
