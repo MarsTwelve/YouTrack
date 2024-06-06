@@ -107,7 +107,14 @@ async def get_users(current_user: Annotated[UserLogin, Depends(get_current_user)
     controller = UserManagementController(user_service)
 
     response = controller.read_all_users(page, page_size)
-    return response
+
+    try:
+        first_item = next(response)
+        remaining_items = list(response)
+    except StopIteration:
+        raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, headers={"X-Message": "No results found"})
+    remaining_items.insert(0, first_item)
+    return remaining_items
 
 
 @users_router.get("/search/{username}")
@@ -119,7 +126,14 @@ async def get_user_by_name(user_name: str):
     user_service = UserManagementService(repository)
     controller = UserManagementController(user_service)
     response = controller.find_user_by_name(user_name)
-    return response
+
+    try:
+        first_item = next(response)
+        remaining_items = list(response)
+    except StopIteration:
+        raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, headers={"X-Message": "No results found"})
+    remaining_items.insert(0, first_item)
+    return remaining_items
 
 
 @users_router.get("/me")
