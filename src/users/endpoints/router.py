@@ -7,7 +7,7 @@ from src.users.schemas.input import UserInput
 from src.users.schemas.login import UserLogin
 from src.users.schemas.update import UserUpdate
 from src.users.schemas.output import UserOutput
-from src.users.services.validation import UserValidatorService
+from src.users.services.user_validation import UserValidatorService
 from src.users.controller.user_validation import UserValidationController
 from src.users.services.user_management import UserManagementService
 from src.users.repository.user_repository import SQLAlchemyUserRepository
