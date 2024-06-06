@@ -1,6 +1,10 @@
+import pytest
 from hamcrest import assert_that, equal_to
 
-from src.users.services.validation import UserValidatorService
+from src.exeptions.custom_exeptions import BadRequestException
+
+from src.users.services.user_validation import UserValidatorService
+from src.users.services.user_validation import UserUpdateValidationService
 
 
 def test_user_validator_format_user_schema_spacing(make_user_schema):
@@ -76,3 +80,23 @@ def test_user_validator_validates_user_validation_main_function_pass(make_user_s
     user = make_user_schema()
     validate = UserValidatorService(user)
     assert_that(validate.validate_user_schema(), equal_to(True))
+
+
+def test_user_update_validator_correct_validate_user_schema(make_user_update_schema):
+    user_update_pass = make_user_update_schema()
+    validate = UserUpdateValidationService(user_update_pass)
+    assert_that(validate.validate_user_schema(), equal_to(None))
+
+
+def test_user_update_validator_incorrect_update_field_validate_user_schema(make_user_update_schema):
+    user_update_fail = make_user_update_schema(update_field="non ecxiste")
+    validate = UserUpdateValidationService(user_update_fail)
+    with pytest.raises(BadRequestException):
+        validate.validate_user_schema()
+
+
+def test_user_update_validator_incorrect_update_param_validate_user_schema(make_user_update_schema):
+    user_update_fail = make_user_update_schema(update_param="non ecxiste")
+    validate = UserUpdateValidationService(user_update_fail)
+    with pytest.raises(BadRequestException):
+        validate.validate_user_schema()
