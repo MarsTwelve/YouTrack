@@ -10,7 +10,7 @@ from src.users.schemas.login import UserLogin
 from src.users.schemas.update import UserUpdate
 from src.users.schemas.output import UserOutput
 from src.Database.models import UserModel
-from src.exeptions.custom_exeptions import BadRequestException
+from src.exeptions.custom_exeptions import DuplicateDataException
 
 
 class SQLAlchemyUserRepository(UserRepositoryInterface, ABC):
@@ -38,7 +38,7 @@ class SQLAlchemyUserRepository(UserRepositoryInterface, ABC):
 
         result = self.__session.execute(select_stmt).first()
         if result:
-            raise BadRequestException("[ERR]DUPLICATE - This user already exists.")
+            raise DuplicateDataException("[ERR]DUPLICATE - This user already exists.")
 
         self.__session.add(user_model)
         self.__session.commit()
