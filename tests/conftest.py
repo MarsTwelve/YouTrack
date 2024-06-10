@@ -29,6 +29,20 @@ def make_client_schema():
     return make
 
 
+@pytest.fixture
+def make_client_update_schema():
+    def make(client_id: str = "30350b587b11479f91a0a7caabcfe328",
+             update_field: str = "company_name",
+             update_param: str = "A Transportes"):
+
+        client_update_schema = ClientUpdate(client_id=client_id,
+                                            update_field=update_field,
+                                            update_param=update_param)
+        return client_update_schema
+
+    return make
+
+
 @pytest.fixture()
 def make_profile_schema():
     def make(profile_name: str = "Standard profile name",
