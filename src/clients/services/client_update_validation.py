@@ -4,11 +4,10 @@ import re
 from src.clients.interfaces.i_validator import ClientUpdateValidationInterface
 from src.exeptions.custom_exeptions import BadRequestException
 from src.clients.schemas.update import ClientUpdate
-from src.clients.services.new_client_validation import CPFValidator, CNPJValidator
+from src.clients.services.cpf_validation import CPFValidationService
 
 
-class ClientUpdateService(ClientUpdateValidationInterface, ABC):
-    allowed_fields = ["name", "company_name", "cellphone", "cpf_cnpj"]
+class ClientUpdateValidationService(ClientUpdateValidationInterface, ABC):
 
     def __init__(self, client_update: ClientUpdate):
         self.__client_update = client_update
@@ -23,16 +22,37 @@ class ClientUpdateService(ClientUpdateValidationInterface, ABC):
     def validate_invalid_chars(self):
         invalid_chars_pattern = r"[^A-z_\s\d]"
 
-        for field_name, field_value in self.__client_update:
-            search = re.search(invalid_chars_pattern, field_value)
-            if search:
-                return True
+        search = re.search(invalid_chars_pattern, self.__client_update.update_param)
+        if search:
+            return True
         return False
 
     def validate_update_field(self):
-        base_response = "[ERR VALIDATION_FAILED]"
-        if self.__client_update.update_field not in self.allowed_fields:
-            raise BadRequestException(base_response + " - This field doesn't allow updates, or doesn't exist")
+        allowed_fields = ["name", "company_name", "cellphone", "cpf_cnpj"]
+        if self.__client_update.update_field not in allowed_fields:
+            return False
+        return True
+
+    def validate_cellphone_pattern(self):
+        brazil_phone_pattern = r"^\+55\s\(\d{2}\)\s?9[\d]{8}"
+        match_phone = re.match(brazil_phone_pattern, self.__client_update.update_param)
+        if match_phone:
+            return True
+        return False
 
     def validate_update_parameters(self):
-        pass
+        if self.__client_update.update_field == "name" or self.__client_update.update_field == "company_name":
+            return not self.validate_invalid_chars()
+        return self.validate_cellphone_pattern()
+
+    def validate_client_update_schema(self):
+        base_response = "[ERR VALIDATION_FAILED]"
+
+        if not self.validate_update_field():
+            raise BadRequestException(base_response + " - This field doesn't allow updates, or doesn't exist")
+
+        if not self.validate_update_parameters():
+            if self.__client_update.update_field == "name" or self.__client_update.update_field == "company_name":
+                raise BadRequestException(base_response + " - Special characters and digits are not allowed here"
+                                                          f" --> {self.__client_update.update_field}")
+            raise BadRequestException(base_response + " - This cellphone number is invalid")
