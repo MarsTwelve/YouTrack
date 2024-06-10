@@ -11,6 +11,32 @@ class BaseClientValidationInterface(ABC):
         pass
 
 
+class CPFCNPJValidatorInterface(ABC):
+    @abstractmethod
+    def remove_dots_hyphen(self):
+        pass
+
+    @abstractmethod
+    def remove_last_digits(self):
+        pass
+
+    @abstractmethod
+    def calculate_first_digit(self):
+        pass
+
+    @abstractmethod
+    def calculate_second_digit(self):
+        pass
+
+    @abstractmethod
+    def validate_pattern(self):
+        pass
+
+    @abstractmethod
+    def validate_digits(self):
+        pass
+
+
 class ClientNameValidationInterface(BaseClientValidationInterface, ABC):
     @abstractmethod
     def validate_name(self):
@@ -23,11 +49,7 @@ class NewClientValidationInterface(BaseClientValidationInterface, ABC):
         pass
 
     @abstractmethod
-    def validate_cpf(self):
-        pass
-
-    @abstractmethod
-    def validate_cnpj(self):
+    def validate_new_client_schema(self):
         pass
 
 
