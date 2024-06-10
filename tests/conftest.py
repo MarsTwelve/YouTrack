@@ -23,7 +23,7 @@ def make_client_schema():
         clients_schema = ClientInput(name=name,
                                      company_name=company_name,
                                      cellphone=cellphone,
-                                     cpf_cnpj=cpf_cnpj, )
+                                     cpf_cnpj=cpf_cnpj)
         return clients_schema
 
     return make

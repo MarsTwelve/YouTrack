@@ -25,7 +25,7 @@ async def create_new_client(client_data: ClientInput):
     controller = NewClientValidationController(validation_service)
 
     try:
-        controller.validate_new_client()  # TODO:refactor to better naming
+        controller.validate_new_client()
     except BadRequestException as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=e.__str__())
 
@@ -60,6 +60,7 @@ async def get_clients(page: int = 1, page_size: int = 5):
     remaining_items.insert(0, first_item)
     return remaining_items
 
+
 @client_router.get("/{name}", status_code=status.HTTP_200_OK)
 async def get_clients_by_name(client_name: str):
     validation_service = ClientNameValidation(client_name)
@@ -91,6 +92,7 @@ async def get_clients_by_name(client_name: str):
 async def update_client_info(client_data: ClientUpdate):
     validation_service = ClientUpdateService(client_data)
     controller = ClientUpdateValidationController(validation_service)
+
     try:
         controller.validate_client_update()
     except BadRequestException as e:

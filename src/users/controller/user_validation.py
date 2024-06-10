@@ -1,4 +1,4 @@
-from src.users.interfaces.i_user_validator import UserValidatorInterface
+from src.users.interfaces.i_user_validation import UserValidatorInterface
 
 
 class UserValidationController:

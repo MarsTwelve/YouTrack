@@ -88,14 +88,14 @@ def test_user_update_validator_correct_validate_user_schema(make_user_update_sch
     assert_that(validate.validate_user_schema(), equal_to(None))
 
 
-def test_user_update_validator_incorrect_update_field_validate_user_schema(make_user_update_schema):
+def test_user_update_validator_incorrect_update_field(make_user_update_schema):
     user_update_fail = make_user_update_schema(update_field="non ecxiste")
     validate = UserUpdateValidationService(user_update_fail)
     with pytest.raises(BadRequestException):
         validate.validate_user_schema()
 
 
-def test_user_update_validator_incorrect_update_param_validate_user_schema(make_user_update_schema):
+def test_user_update_validator_incorrect_update_param(make_user_update_schema):
     user_update_fail = make_user_update_schema(update_param="non ecxiste")
     validate = UserUpdateValidationService(user_update_fail)
     with pytest.raises(BadRequestException):
