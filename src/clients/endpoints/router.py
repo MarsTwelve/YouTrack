@@ -27,7 +27,9 @@ client_router = APIRouter(
 
 @client_router.post("/")
 async def create_new_client(client_data: ClientInput):
-    validation_service = ClientValidatorService(client_data)
+    cpf_validation_service = CPFValidationService(client_data.cpf_cnpj)
+    cnpj_validation_service = CNPJValidationService(client_data.cpf_cnpj)
+    validation_service = ClientValidatorService(client_data, cpf_validation_service, cnpj_validation_service)
     controller = NewClientValidationController(validation_service)
 
     try:
