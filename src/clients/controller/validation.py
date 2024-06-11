@@ -9,7 +9,7 @@ class NewClientValidationController:
         self.__validate = validate
 
     def validate_new_client(self):
-        return self.__validate.is_valid()
+        return self.__validate.validate_new_client_schema()
 
 
 class ClientNameValidationController:

@@ -1,17 +1,23 @@
-from fastapi import APIRouter, status, Response, HTTPException
+from fastapi import APIRouter, status, HTTPException
+
 from src.Database.operations import Database
+from src.exeptions.custom_exeptions import BadRequestException
+
 from src.clients.schemas.input import ClientInput
 from src.clients.schemas.update import ClientUpdate
+
 from src.clients.services.new_client_validation import ClientValidatorService
 from src.clients.services.client_name_validation import ClientNameValidation
 from src.clients.services.client_management import ClientManagementService
-from src.clients.services.client_update_validation import ClientUpdateService
+from src.clients.services.client_update_validation import ClientUpdateValidationService
+from src.clients.services.cpf_validation import CPFValidationService
+from src.clients.services.cnpj_validation import CNPJValidationService
+
 from src.clients.repository.client_repository import SQLAlchemyClientRepository
 from src.clients.controller.client_management import ClientManagementController
 from src.clients.controller.validation import (NewClientValidationController,
                                                ClientNameValidationController,
                                                ClientUpdateValidationController)
-from src.exeptions.custom_exeptions import BadRequestException
 
 client_router = APIRouter(
     prefix="/clients",
@@ -90,7 +96,7 @@ async def get_clients_by_name(client_name: str):
 
 @client_router.patch("/{client_id}")
 async def update_client_info(client_data: ClientUpdate):
-    validation_service = ClientUpdateService(client_data)
+    validation_service = ClientUpdateValidationService(client_data)
     controller = ClientUpdateValidationController(validation_service)
 
     try:
@@ -110,7 +116,6 @@ async def update_client_info(client_data: ClientUpdate):
 
 @client_router.delete("/{client_id}", status_code=status.HTTP_200_OK)
 async def delete_client(client_id):
-    # TODO: add validation to the delete DTO
     db = Database()
     session = db.get_session()
 

@@ -3,26 +3,29 @@ from fastapi.security import OAuth2PasswordRequestForm
 from typing import Annotated, Optional
 
 from src.Database.operations import Database
-from src.users.schemas.input import UserInput
-from src.users.schemas.login import UserLogin
-from src.users.schemas.update import UserUpdate
-from src.users.schemas.output import UserOutput
-from src.users.services.user_validation import UserValidatorService
-from src.users.controller.user_validation import UserValidationController
-from src.users.services.user_management import UserManagementService
-from src.users.repository.user_repository import SQLAlchemyUserRepository
-from src.users.controller.user_management import UserManagementController
-
 from src.exeptions.custom_exeptions import (BadRequestException,
                                             DuplicateDataException)
-
-from src.auth.schemas import Token
 from src.auth.authentication import (authenticate_user,
                                      get_password_hash,
                                      get_token_timedelta,
                                      create_access_token,
                                      get_current_user,
                                      oauth2_scheme)
+
+from src.users.schemas.input import UserInput
+from src.users.schemas.login import UserLogin
+from src.users.schemas.update import UserUpdate
+
+from src.users.services.user_validation import (UserValidatorService,
+                                                UserUpdateValidationService)
+from src.users.services.user_management import UserManagementService
+
+from src.users.controller.user_validation import UserValidationController
+from src.users.controller.user_management import UserManagementController
+from src.users.repository.user_repository import SQLAlchemyUserRepository
+
+
+from src.auth.schemas import Token
 
 # TODO: multiple changes to be made to the client, such as
 #  a new login method with oauth, similar to users, to better handle data and access points, implement a add_user
@@ -172,7 +175,7 @@ async def update_user_info(current_user: Annotated[UserLogin, Depends(get_curren
     user_service = UserManagementService(repository)
     controller = UserManagementController(user_service)
     user_id = controller.get_current_user(
-        current_user.payload_data)  # TODO: change UserLogin to other model(priority 1 - green)
+        current_user.payload_data)  # TODO: change UserLogin to other model(priority 0 - green)
     user_data.user_id = user_id.user_id
 
     response = controller.update_user(user_data)
@@ -182,7 +185,7 @@ async def update_user_info(current_user: Annotated[UserLogin, Depends(get_curren
 
 @users_router.delete("/{user_id}")
 async def delete_user(current_user: Annotated[UserLogin, Depends(get_current_user)],
-                      user_id: str | None = None):
+                      user_id: Optional[str] | None = None):
     if not current_user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="[ERR]INVALID_CREDENTIALS - "
                                                                              "Could not validate user credentials")

@@ -2,11 +2,11 @@ from abc import ABC
 
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session
+from src.Database.models import ProfileModel
 
 from src.profiles.schemas.input import ProfileInput
 from src.profiles.schemas.update import ProfileUpdate
 from src.profiles.schemas.output import ProfileOutput
-from src.Database.models import ProfileModel
 from src.profiles.interfaces.i_profile_repository import ProfileRepositoryInterface
 
 
@@ -48,12 +48,12 @@ class SQLAlchemyProfileRepository(ProfileRepositoryInterface, ABC):
                                              perimeters=row.perimeters,
                                              tracking=row.tracking,
                                              weather=row.weather)
+
             yield profile_response
 
         self.__session.close()
 
     def select_profile_by_name(self, profile_name: str):
-
         select_by_name = (select(ProfileModel)
                           .where(ProfileModel.profile_name
                                  .like(f"%{profile_name}%")))

@@ -1,3 +1,4 @@
+from abc import ABC
 
 from src.profiles.interfaces.i_profile_service import ProfileManagementInterface
 from src.profiles.interfaces.i_profile_repository import ProfileRepositoryInterface
@@ -5,7 +6,7 @@ from src.profiles.schemas.input import ProfileInput
 from src.profiles.schemas.update import ProfileUpdate
 
 
-class ProfileManagementService(ProfileManagementInterface):
+class ProfileManagementService(ProfileManagementInterface, ABC):
 
     def __init__(self, repository: ProfileRepositoryInterface):
         self.__repository = repository

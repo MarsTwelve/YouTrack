@@ -62,7 +62,7 @@ class ProfileModel(Base):
 
     user: Mapped[List["UserModel"]] = relationship(back_populates="profile")
 
-    vehicles: Mapped[List["VehicleModel"]] = relationship(secondary=profiles_vehicles_model, back_populates="users")
+    vehicles: Mapped[List["VehicleModel"]] = relationship(secondary=profiles_vehicles_model, back_populates="profiles")
 
 
 class VehicleModel(Base):
@@ -76,4 +76,4 @@ class VehicleModel(Base):
     number_plate: Mapped[str] = mapped_column(String(7))
 
     client_id: Mapped[str] = mapped_column(String(32), ForeignKey("clients_table.id"))
-    users: Mapped[List["ProfileModel"]] = relationship(secondary=profiles_vehicles_model, back_populates="vehicles")
+    profiles: Mapped[List["ProfileModel"]] = relationship(secondary=profiles_vehicles_model, back_populates="vehicles")

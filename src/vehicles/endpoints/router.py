@@ -1,6 +1,8 @@
-from fastapi import APIRouter, status, HTTPException
+from fastapi import APIRouter, status, HTTPException, Depends
+from typing import Annotated
 
 from src.Database.operations import Database
+from src.users.schemas.login import UserLogin
 from src.auth.authentication import get_current_user
 from src.exeptions.custom_exeptions import BadRequestException
 
@@ -12,7 +14,6 @@ from src.vehicles.services.validation import VehicleValidationService
 from src.vehicles.services.vehicle_management import VehicleManagementService
 from src.vehicles.controller.validation import VehicleValidationController
 from src.vehicles.controller.vehicle_management import VehicleManagementController
-
 
 vehicles_router = APIRouter(
     prefix="/vehicles",
@@ -83,6 +84,8 @@ async def get_vehicle_by_name(vehicle_data: VehicleSearch):
 
 @vehicles_router.patch("/{vehicle_id}")
 async def update_vehicle_info(vehicle_data: VehicleUpdate):
+    # TODO: also needs validation, and testing (priority - 0)
+
     db = Database()
     session = db.get_session()
 

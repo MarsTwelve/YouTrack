@@ -1,15 +1,16 @@
 from abc import ABC
 
-from sqlalchemy import select, update
+from sqlalchemy import select, update, and_
 from sqlalchemy.orm import Session
+
+from src.Database.models import VehicleModel
+
 
 from src.vehicles.interfaces.i_vehicle_repository import VehicleRepositoryInterface
 from src.vehicles.schemas.input import VehicleInput
 from src.vehicles.schemas.search import VehicleSearch
 from src.vehicles.schemas.update import VehicleUpdate
 from src.vehicles.schemas.output import VehicleOutput
-
-from src.Database.models import VehicleModel
 
 
 class SQLAlchemyVehicleRepository(VehicleRepositoryInterface, ABC):
@@ -80,10 +81,10 @@ class SQLAlchemyVehicleRepository(VehicleRepositoryInterface, ABC):
     def update_vehicle_info(self, vehicle_data: VehicleUpdate):
         update_field = vehicle_data.update_field
         update_param = vehicle_data.update_param
-        update_stmt = (update(VehicleUpdate)
+        update_stmt = (update(VehicleModel)
                        .values({update_field: update_param})
-                       .where(VehicleModel.id == vehicle_data.profile_id))
-        retrieve_updated = select(VehicleModel).where(VehicleModel.id == vehicle_data.profile_id)
+                       .where(VehicleModel.id == vehicle_data.vehicle_id))
+        retrieve_updated = select(VehicleModel).where(VehicleModel.id == vehicle_data.vehicle_id)
 
         self.__session.execute(update_stmt)
         self.__session.commit()

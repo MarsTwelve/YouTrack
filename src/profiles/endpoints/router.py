@@ -136,8 +136,8 @@ async def delete_profile(current_user: Annotated[UserLogin, Depends(get_current_
     session = db.get_session()
 
     repository = SQLAlchemyProfileRepository(session)
-    client_service = ProfileManagementService(repository)
-    controller = ProfileManagementController(client_service)
+    profile_service = ProfileManagementService(repository)
+    controller = ProfileManagementController(profile_service)
 
     response = controller.delete_profile(profile_id)
     return response
