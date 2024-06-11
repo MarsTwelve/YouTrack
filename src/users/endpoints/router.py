@@ -158,11 +158,17 @@ async def get_user_me(current_user: Annotated[UserLogin, Depends(get_current_use
 
 @users_router.patch("/{user_id}")
 async def update_user_info(current_user: Annotated[UserLogin, Depends(get_current_user)], user_data: UserUpdate):
-    #TODO: implement validation for user_data, along with testing(priority 0 - red)
-
     if not current_user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="[ERR]INVALID_CREDENTIALS - "
                                                                              "Could not validate user credentials")
+
+    user_service = UserUpdateValidationService(user_data)
+    controller = UserValidationController(user_service)
+
+    try:
+        controller.validate_user_data()
+    except BadRequestException as err:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=err.__str__())
 
     if user_data.user_id:
         # TODO: check if user has admin permission, raise error if not (priority 1 - yellow)
