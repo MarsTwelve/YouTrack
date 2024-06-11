@@ -189,7 +189,29 @@ async def update_user_info(current_user: Annotated[UserLogin, Depends(get_curren
     return response
 
 
-@users_router.delete("/{user_id}")
+@users_router.post("/add/{profile_id}")
+async def add_user_to_profile(current_user: Annotated[UserLogin, Depends(get_current_user)], profile_id: str):
+    if not current_user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="[ERR]INVALID_CREDENTIALS - "
+                                                                             "Could not validate user credentials")
+
+    db = Database()
+    session = db.get_session()
+
+    repository = SQLAlchemyUserRepository(session)
+    user_service = UserManagementService(repository)
+    controller = UserManagementController(user_service)
+    user_id = controller.get_current_user(
+        current_user.payload_data)  # TODO: change UserLogin to other model(priority 0 - green)
+    user_update = UserUpdate(user_id=user_id.user_id,
+                             update_field="profile_id",
+                             update_param=profile_id)
+    response = controller.update_user(user_update)
+
+    return response
+
+
+@users_router.delete("/user_id")
 async def delete_user(current_user: Annotated[UserLogin, Depends(get_current_user)],
                       user_id: Optional[str] | None = None):
     if not current_user:
