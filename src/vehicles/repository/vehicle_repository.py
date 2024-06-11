@@ -52,6 +52,13 @@ class SQLAlchemyVehicleRepository(VehicleRepositoryInterface, ABC):
 
         self.__session.close()
 
+    def select_vehicle_by_id(self, vehicle_id: str):
+        select_vehicle = (select(VehicleModel)
+                          .where(VehicleModel.id == vehicle_id))
+
+        result = self.__session.execute(select_vehicle).scalar()
+        return result
+
     def select_vehicle_by_search_criteria(self, vehicle_data: VehicleSearch):
         select_by_name = (select(VehicleModel)
                           .where(VehicleModel.vehicle_model.like(f"%{vehicle_data.model}%")))

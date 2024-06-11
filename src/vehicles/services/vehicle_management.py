@@ -23,5 +23,8 @@ class VehicleManagementService(VehicleManagementInterface, ABC):
     def update_vehicle(self, vehicle_data: VehicleUpdate):
         return self.__repository.update_vehicle_info(vehicle_data)
 
+    def select_vehicle_by_id(self, vehicle_id: str):
+        return self.__repository.select_vehicle_by_id(vehicle_id)
+
     def delete_vehicle(self, vehicle_id: str):
         return self.__repository.delete_vehicle(vehicle_id)

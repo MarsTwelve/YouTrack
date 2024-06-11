@@ -20,5 +20,8 @@ class VehicleManagementController:
     def update_vehicle(self, vehicle_data: VehicleUpdate):
         return self.__client_service.update_vehicle(vehicle_data)
 
+    def select_vehicle_by_id(self, vehicle_id: str):
+        return self.__client_service.select_vehicle_by_id(vehicle_id)
+
     def delete_vehicle(self, vehicle_id: str):
         return self.__client_service.delete_vehicle(vehicle_id)

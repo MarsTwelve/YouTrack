@@ -24,5 +24,9 @@ class VehicleRepositoryInterface(ABC):
         pass
 
     @abstractmethod
+    def select_vehicle_by_id(self, vehicle_id: str):
+        pass
+
+    @abstractmethod
     def delete_vehicle(self, vehicle_id):
         pass
