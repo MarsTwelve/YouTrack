@@ -61,15 +61,27 @@ class SQLAlchemyVehicleRepository(VehicleRepositoryInterface, ABC):
         return result
 
     def select_vehicle_by_search_criteria(self, vehicle_data: VehicleSearch):
-        select_by_name = (select(VehicleModel)
-                          .where(VehicleModel.vehicle_model.like(f"%{vehicle_data.model}%")))
+        result = None
 
-        result = self.__session.execute(select_by_name).scalars()
+        if not vehicle_data.model:
+            select_brand = (select(VehicleModel)
+                            .where(VehicleModel.vehicle_make.like(f"%{vehicle_data.make}%")))
+            result = self.__session.execute(select_brand).scalars()
+
+        if vehicle_data.model:
+            select_model = (select(VehicleModel)
+                            .where(and_(VehicleModel.vehicle_model.like(f"%{vehicle_data.model}%"),
+                                        VehicleModel.vehicle_make).like(f"%{vehicle_data.make}%")))
+            result = self.__session.execute(select_model).scalars()
+
+        if not result:
+            return "Not Found error" # TODO: Properly add the 204 not found error (priority 1)
 
         for row in result:
+            specific_profile = row.profiles[0]
             vehicle_response = VehicleOutput(vehicle_id=row.id,
                                              client_id=row.client_id,
-                                             profile_id="Fix later",
+                                             profile_id=specific_profile.id,
                                              vehicle_make=row.vehicle_make,
                                              vehicle_model=row.vehicle_model,
                                              vehicle_trim=row.vehicle_trim,
