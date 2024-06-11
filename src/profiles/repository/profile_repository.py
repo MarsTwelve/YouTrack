@@ -114,3 +114,14 @@ class SQLAlchemyProfileRepository(ProfileRepositoryInterface, ABC):
             else:
                 return "[ERR]DELETION_ERROR - Profile deletion failed"  # TODO: Change to custom exception later (priority 2 - Yellow)
         return f"No profile found with id {profile_id}"  # TODO: Change to custom exception later(priority 2 - Yellow)
+
+    def insert_new_vehicle(self, vehicle, profile_id: str):
+        select_profile = (select(ProfileModel)
+                          .where(ProfileModel.id == profile_id))
+
+        profile_to_update = self.__session.execute(select_profile).scalar()
+
+        profile_to_update.vehicles.append(vehicle)
+
+        self.__session.add(profile_to_update)
+        self.__session.commit()

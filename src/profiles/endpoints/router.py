@@ -16,6 +16,10 @@ from src.profiles.repository.profile_repository import SQLAlchemyProfileReposito
 from src.profiles.controller.profile_management import ProfileManagementController
 from src.profiles.controller.profile_validation import ProfileValidationController
 
+from src.vehicles.repository.vehicle_repository import SQLAlchemyVehicleRepository
+from src.vehicles.services.vehicle_management import VehicleManagementService
+from src.vehicles.controller.vehicle_management import VehicleManagementController
+
 profile_router = APIRouter(
     prefix="/profile",
     tags=["profiles"]
@@ -137,3 +141,27 @@ async def delete_profile(current_user: Annotated[UserLogin, Depends(get_current_
 
     response = controller.delete_profile(profile_id)
     return response
+
+
+@profile_router.patch("/add/vehicle/{vehicle_id}")
+async def add_vehicle_to_profile(current_user: Annotated[UserLogin, Depends(get_current_user)],
+                                 vehicle_id: str,
+                                 profile_id: str):
+    if not current_user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="[ERR]INVALID_CREDENTIALS - "
+                                                                             "Could not validate user credentials")
+
+    db = Database()
+    session = db.get_session()
+
+    vehicle_repo = SQLAlchemyVehicleRepository(session)
+    vehicle_service = VehicleManagementService(vehicle_repo)
+    vehicle_controller = VehicleManagementController(vehicle_service)
+
+    vehicle = vehicle_controller.select_vehicle_by_id(vehicle_id)
+
+    repository = SQLAlchemyProfileRepository(session)
+    profile_service = ProfileManagementService(repository)
+    controller = ProfileManagementController(profile_service)
+
+    controller.add_vehicle_to_profile(vehicle, profile_id)

@@ -23,5 +23,9 @@ class ProfileRepositoryInterface(ABC):
         pass
 
     @abstractmethod
+    def insert_new_vehicle(self, vehicle_id: str, profile_id: str):
+        pass
+
+    @abstractmethod
     def delete_profile(self, profile_id: str):
         pass

@@ -19,5 +19,8 @@ class ProfileManagementController:
     def update_profile(self, profile_data: ProfileUpdate):
         return self.__profile_service.update_profile(profile_data)
 
+    def add_vehicle_to_profile(self, vehicle_id, profile_id: str):
+        return self.__profile_service.insert_new_vehicle(vehicle_id, profile_id)
+
     def delete_profile(self, profile_id: str):
         return self.__profile_service.delete_profile(profile_id)

@@ -22,5 +22,8 @@ class ProfileManagementService(ProfileManagementInterface):
     def update_profile(self, profile_data: ProfileUpdate):
         return self.__repository.update_profile(profile_data)
 
+    def insert_new_vehicle(self, vehicle_id: str, profile_id: str):
+        return self.__repository.insert_new_vehicle(vehicle_id, profile_id)
+
     def delete_profile(self, profile_id: str):
         return self.__repository.delete_profile(profile_id)
