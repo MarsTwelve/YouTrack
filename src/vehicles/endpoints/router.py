@@ -24,6 +24,10 @@ vehicles_router = APIRouter(
 @vehicles_router.post("/")
 async def create_new_vehicle(vehicle_data: VehicleInput):
     #TODO: implement current user, later make a select to get the client_id (priority 0 - yellow)
+async def create_new_vehicle(current_user: Annotated[UserLogin, Depends(get_current_user)], vehicle_data: VehicleInput):
+    if not current_user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="[ERR]INVALID_CREDENTIALS - "
+                                                                             "Could not validate user credentials")
 
     validation_service = VehicleValidationService(vehicle_data)
     controller = VehicleValidationController(validation_service)
